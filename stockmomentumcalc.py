@@ -1,6 +1,5 @@
 # Standard Imports
 import pandas as pd
-import sys
 import numpy as np
 from datetime import datetime, timedelta
 from testMailPython import mailDesc
@@ -10,7 +9,7 @@ from excelGenericModule import excelSheetPart, excelSheetWriteData, writeToWorkb
 
 import math
 from collections import OrderedDict
-from get_latest_tuesday import latest_tuesday_func
+from get_latest_tuesday import latest_monday_func
 
 mainDownloadDir = 'excelfilesfolder'
 downloadDir = 'excelStockMomentum'
@@ -193,8 +192,10 @@ def postgre_sql_read_df(query):
 def mainStockMomemtumCalcFr():
     pd.options.mode.chained_assignment = None  # default='warn'
     todaysDate = datetime.now()
+    # date 2 years ago
+    date_2_yrs_ago = datetime.now() - timedelta(days=365*2)
     # todaysDateString = todaysDate.strftime('%Y-%m-%d')
-    latest_date = latest_tuesday_func(todaysDate)
+    latest_date = latest_monday_func(todaysDate)
     list_jobj_momentum_500 = list()
     # worksheet = excelSheetPart('stockMomentum_nifty500')
     # worksheet = excelSheetPart('actual_return_ratio')
@@ -204,12 +205,13 @@ def mainStockMomemtumCalcFr():
     for key, value in tokens_df.iterrows():
         try:
             if(value['jas_token'] >= 0):
-                fr = value['jas_token']
+                jas_token = value['jas_token']
                 trading_symbol = value['trading_symbol']
                 name_market = value['name']
-                query_nse_data = "Select * from nse_data WHERE nifty500=TRUE ORDER BY jas_token"
+                latest_date_str = latest_date.strftime('%Y-%m-%d')
+                date_2_yrs_ago_str = date_2_yrs_ago.strftime('%Y-%m-%d')
+                query_nse_data = "Select * from nse_data WHERE jas_token={0} and (timestamp>={1} and timestamp<={2}".format(jas_token,latest_date_str,date_2_yrs_ago_str)
                 df = postgre_sql_read_df(query_nse_data)
-
                 df = df.apply(pd.to_numeric)
                 print(df)
                 print("*************************************")
@@ -267,7 +269,7 @@ def mainStockMomemtumCalcFr():
 
                 jobj_stock_momentum = OrderedDict()
 
-                jobj_stock_momentum['jas_token'] = fr
+                jobj_stock_momentum['jas_token'] = jas_token
                 jobj_stock_momentum['tradingSymbol'] = trading_symbol
                 jobj_stock_momentum['nameMarket'] = name_market
                 jobj_stock_momentum['timestamp'] = latest_date
@@ -292,10 +294,10 @@ def mainStockMomemtumCalcFr():
 
         except Exception as e:
             print('not cont..')
-            print("********************* Exception for "+str(fr)+"   "+str(trading_symbol)+" *****************************")
+            print("********************* Exception for "+str(jas_token)+"   "+str(trading_symbol)+" *****************************")
             print(e)
 
-    print(list_jobj_momentum_500)
+#    print(list_jobj_momentum_500)
     df_jobj_momentum = pd.DataFrame(list_jobj_momentum_500)
     df_jobj_momentum = df_jobj_momentum.sort_values(by='adjusted_slope',ascending=False)
     workBookName = 'stock_momentum_nifty500_'+str(latest_date)+'.xlsx'
@@ -325,7 +327,7 @@ def mainStockMomemtumAllFr():
 
     todaysDate = datetime.now()
     # todaysDateString = todaysDate.strftime('%Y-%m-%d')
-    latest_date = latest_tuesday_func(todaysDate)
+    latest_date = latest_monday_func(todaysDate)
     print(tokensdf)
     for key, value in tokensdf.iterrows():
         try:
@@ -452,7 +454,7 @@ def mainStockMomemtumCalcFrNifty100():
     # print(df_iter)
     todaysDate = datetime.now()
     # todaysDateString = todaysDate.strftime('%Y-%m-%d')
-    latest_date = latest_tuesday_func(todaysDate)
+    latest_date = latest_monday_func(todaysDate)
     list_jobj_momentum_100 = list()
     worksheet = excelSheetPart('stockMomentum_nifty100')
     # worksheet = excelSheetPart('actual_return_ratio')
@@ -591,7 +593,7 @@ def mainStockMomemtumCalcFrNiftyMid150():
     # print(df_iter)
     todaysDate = datetime.now()
     # todaysDateString = todaysDate.strftime('%Y-%m-%d')
-    latest_date = latest_tuesday_func(todaysDate)
+    latest_date = latest_monday_func(todaysDate)
     list_jobj_momentum_midcap150 = list()
     worksheet = excelSheetPart('stockMomentum_niftymidcap150')
     # worksheet = excelSheetPart('actual_return_ratio')
@@ -730,7 +732,7 @@ def mainStockMomemtumCalcFrNiftySmall250():
     # print(df_iter)
     todaysDate = datetime.now()
     # todaysDateString = todaysDate.strftime('%Y-%m-%d')
-    latest_date = latest_tuesday_func(todaysDate)
+    latest_date = latest_monday_func(todaysDate)
     list_jobj_momentum_smallcap250 = list()
     worksheet = excelSheetPart('stockMomentum_niftysmallcap250')
     # worksheet = excelSheetPart('actual_return_ratio')

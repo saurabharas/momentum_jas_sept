@@ -93,34 +93,34 @@ def historical_date_to_date(star_date, end_date, jas_mapping_df=None):
                         timestampObj = time.mktime(timeObj.timetuple())
                         timestampNew = datetime.utcfromtimestamp(timestampObj)
 
-                        jsonObjNseMongo={}
-                        jsonObjNseMongo['id']= str(jas_token)+"_"+_date
-                        jsonObjNseMongo['close']= closeVal
-                        jsonObjNseMongo['jas_token']= int(jas_token)
-                        jsonObjNseMongo['high']= highVal
-                        jsonObjNseMongo['low']= lowVal
-                        jsonObjNseMongo['nameMarket']= nameMarket
-                        jsonObjNseMongo['open']= openVal
-                        jsonObjNseMongo['timestamp']= _date
-                        jsonObjNseMongo['tradingSymbol']= tradingSymbol
-                        jsonObjNseMongo['volume']= volume
-                        jsonObjNseMongo['dateNew']= dateNew 
+                        json_nse_dict={}
+                        json_nse_dict['id']= str(jas_token)+"_"+_date
+                        json_nse_dict['close']= closeVal
+                        json_nse_dict['jas_token']= int(jas_token)
+                        json_nse_dict['high']= highVal
+                        json_nse_dict['low']= lowVal
+                        json_nse_dict['nameMarket']= nameMarket
+                        json_nse_dict['open']= openVal
+                        json_nse_dict['timestamp']= _date
+                        json_nse_dict['tradingSymbol']= tradingSymbol
+                        json_nse_dict['volume']= volume
+                        json_nse_dict['dateNew']= dateNew 
 
                         # Inserting data into database
-                        columns = jsonObjNseMongo.keys()
-                        values = [jsonObjNseMongo[column] for column in columns]
+                        columns = json_nse_dict.keys()
+                        values = [json_nse_dict[column] for column in columns]
                         insert_statement = 'insert into nse_data (%s) values %s'
                         db_obj.insertQueryDict(insert_statement, columns, values)
                         print('running done for '+jas_token+' -----   '+' nse '+str(star_date)) 
 
                 except Exception as e:
-                        print "Couldn't get NSE Mongo Update  data for FR Token: " + jas_token
-                        print e            
+                        print("Couldn't get NSE Mongo Update  data for FR Token: {0}".format(jas_token))
+                        print(e)            
                         #fsrefnse.document(u')        
 
 
 # historical_date_to_date('2008-01-01','2018-07-05')
-def main_date_loop(df_mapping):
+def historical_date_loop(df_mapping):
     val = '2008-01-01'
     val_1 = datetime.now() - timedelta(days=365*10)
     val_1 = val_1.strftime('%Y-%m-%d')
@@ -149,7 +149,7 @@ query_mapping = "SELECT * FROM mapping_data"
 df_mapping = postgre_sql_read_df(query_mapping)
 
 # Read Historical data --- [Comment the below line when daily running data]
-main_date_loop(df_mapping)
+historical_date_loop(df_mapping)
 
 # Daily Data Fetch
 start_date = datetime.now().strftime('%Y-%m-%d')

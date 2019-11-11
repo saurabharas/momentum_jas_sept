@@ -2,12 +2,8 @@
 from kiteconnect import KiteConnect
 
 # standard python imports 
-import requests
 import pandas as pd
-import time
 from datetime import datetime, timedelta
-import os
-import logging
 
 # PostgresDB connection 
 import psycopg2
@@ -97,3 +93,8 @@ def main_func():
     tuesday_date_string = latest_tuesday_func(todays_date)
     # 1st check: If market is more than 200 DMA then buy 
     flag_buy = get_index_nifty500_data(tuesday_date_string)
+    
+    
+    
+
+
