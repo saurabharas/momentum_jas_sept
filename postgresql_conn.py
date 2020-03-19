@@ -158,6 +158,7 @@ class Database:
             cursor.execute(query, (AsIs(','.join(columns)), tuple(values)))        
             self.conn.commit()
         except Exception as e:
+            print(e)
             self.logger.error(e)
             self.conn.rollback()
         if 'e' in locals():

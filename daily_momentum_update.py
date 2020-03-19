@@ -6,7 +6,6 @@
 import pandas as pd
 import sys
 import numpy as np
-import scipy.stats
 # sys.path.insert(4,'C:\\MyDesktop\\pyFirefox') #---Change required
 sys.path.insert(4, '/home/saurabh/pymainsau/pyfirefox')  # ---Change required
 sys.path.insert(4, '/home/saurabh/pymainsau/pymail')
@@ -51,7 +50,6 @@ CONNSTRING = "host='finre.cgk4260wbdoi.ap-south-1.rds.amazonaws.com' dbname='fin
 conn = psycopg2.connect(CONNSTRING)
 cur = conn.cursor()
 engine = create_engine('postgresql://whitedwarf:#finre123#@finre.cgk4260wbdoi.ap-south-1.rds.amazonaws.com:5432/finre')
-from tabulate import tabulate
 from email.mime.text import MIMEText
 
 '''
@@ -379,8 +377,6 @@ def mutual_funds_calc(mf_current_cash_eq,mf_total_units,mf_inv_amount):
     mf_unrealized_return = mf_inv_val - mf_inv_amount
 
     return mf_inv_amount,mf_total_units,mf_inv_val,mf_return_val,mf_return_per,mf_unrealized_return,mf_current_nav,mf_name,mf_todays_return
-
-
 
 
 def main_calc(dynamo_momentum_user_main):
